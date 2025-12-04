@@ -1,8 +1,25 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { loginApi } from "../Api/fakeApi";
-import { authLogin, authLogout } from "./authFunctions";
 
 const AuthContext = createContext();
+
+// Funções de Autenticação Incorporadas
+// (Baseadas na suposição da sua arquitetura)
+
+async function handleLogin(username, password, setUser, setToken, apiFn) {
+  const data = await apiFn(username, password);
+  // No mundo real, você faria uma chamada API para validar o token
+  // e buscar os dados do usuário. Aqui, estamos simulando.
+  const user = { username: username, token: data.token }; 
+  setUser(user);
+  setToken(data.token);
+  return user;
+}
+
+function handleLogout(setUser, setToken) {
+  setUser(null);
+  setToken(null);
+}
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(() => {
@@ -26,11 +43,13 @@ export function AuthProvider({ children }) {
   }, [token]);
 
   async function login(username, password) {
-    return authLogin(username, password, setUser, setToken, loginApi);
+    // Chama a função de login interna
+    return handleLogin(username, password, setUser, setToken, loginApi);
   }
 
   function logout() {
-    authLogout(setUser, setToken);
+    // Chama a função de logout interna
+    handleLogout(setUser, setToken);
   }
 
   return (
